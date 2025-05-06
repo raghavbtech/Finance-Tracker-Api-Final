@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'baseproject/transaction_form.css' %}" />
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <div class="page-header">
+        <h2>{{ title }}</h2>
+        <div class="header-actions">
+            <a href="{% url 'transaction_list' %}" class="btn-icon">
+                <i class="fas fa-list"></i>
+                <span>All Transactions</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <!-- Left Column - Form Section -->
+        <div class="form-section">
+            <div class="form-card">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i>
+                    <h3>Transaction Details</h3>
+                </div>
+                
+                <form method="post" class="transaction-form">
+                    {% csrf_token %}
+                    
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="category" class="form-label">Category</label>
+                            <input type="text" class="form-control" id="category" name="category" value="{{ transaction.category }}" required>
+                            {% if category_error %}
+                                <div class="error-message">{{ category_error }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="amount" class="form-label">Amount</label>
+                            <input type="number" step="0.01" class="form-control" id="amount" name="amount" value="{{ transaction.amount }}" required>
+                            {% if amount_error %}
+                                <div class="error-message">{{ amount_error }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="input-group textarea-group">
+                        <div class="input-icon">
+                            <i class="fas fa-align-left"></i>
+                        </div>
+                        <div class="input-wrapper">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ transaction.description }}</textarea>
+                            {% if description_error %}
+                                <div class="error-message">{{ description_error }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Transaction
+                        </button>
+                        <a href="{% url 'transaction_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h3 class="chart-title">Monthly Overview</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3 class="chart-title">Expense Categories</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column - Stats & Transactions -->
+        <div class="side-section">
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card income">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Income</div>
+                        <div class="stat-value">$8,940.50</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-caret-up"></i>
+                            12.5% from last month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card expense">
+                    <div class="stat-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total Expenses</div>
+                        <div class="stat-value">$5,320.75</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-caret-up"></i>
+                            8.3% from last month
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card balance">
+                    <div class="stat-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Current Balance</div>
+                        <div class="stat-value">$3,619.75</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-caret-up"></i>
+                            21.4% from last month
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Transactions -->
+            <div class="transactions-container">
+                <div class="card-header">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Recent Transactions</h3>
+                </div>
+                
+                <div class="transaction-list">
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon income-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>Salary Payment</h4>
+                                <p>April 5, 2025</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount income-amount">+$3,450.00</div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon expense-icon">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>Rent Payment</h4>
+                                <p>April 3, 2025</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount expense-amount">-$1,200.00</div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon expense-icon">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>Grocery Shopping</h4>
+                                <p>April 2, 2025</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount expense-amount">-$127.85</div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon income-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>Freelance Project</h4>
+                                <p>March 29, 2025</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount income-amount">+$850.00</div>
+                    </div>
+                    
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-icon expense-icon">
+                                <i class="fas fa-minus"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <h4>Utility Bills</h4>
+                                <p>March 28, 2025</p>
+                            </div>
+                        </div>
+                        <div class="transaction-amount expense-amount">-$215.50</div>
+                    </div>
+                </div>
+                
+                <div class="view-all">
+                    <a href="{% url 'transaction_list' %}" class="btn-text">
+                        View All Transactions
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Monthly Overview Chart
+    const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+    const expenseChart = new Chart(expenseCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [
+                {
+                    label: 'Income',
+                    data: [5200, 6100, 7500, 8940, 0, 0],
+                    borderColor: '#4ecca3',
+                    backgroundColor: 'rgba(78, 204, 163, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                },
+                {
+                    label: 'Expenses',
+                    data: [3800, 4300, 4900, 5320, 0, 0],
+                    borderColor: '#ff2e88',
+                    backgroundColor: 'rgba(255, 46, 136, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            family: 'Lexend'
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Expense Categories Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Other'],
+            datasets: [{
+                data: [1200, 850, 450, 620, 680, 1520],
+                backgroundColor: [
+                    '#00f7ff',
+                    '#4ecca3',
+                    '#b24bff',
+                    '#ff2e88',
+                    '#FFD166',
+                    '#06D6A0'
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            family: 'Lexend'
+                        },
+                        padding: 15
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

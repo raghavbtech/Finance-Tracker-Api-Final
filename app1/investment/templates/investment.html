@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal Finance Tracker</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      /* Import Google Fonts */
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      /* Modern Reset & Base Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #fafafa;
+        min-height: 100vh;
+        color: #1a1a1a;
+        display: flex;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar Styles */
+      .sidebar {
+        width: 250px;
+        background: #000000;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding: 2rem 0;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        z-index: 100;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0 1.5rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #ffffff;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #ffffff;
+        color: #000000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-menu {
+        list-style: none;
+        padding: 0;
+      }
+
+      .nav-item {
+        margin: 0.3rem 0;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1.5rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        gap: 0.8rem;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+        border-left: 3px solid #ffffff;
+      }
+
+      .nav-link i {
+        width: 20px;
+        text-align: center;
+      }
+
+      .sidebar-footer {
+        padding: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 1.5rem;
+      }
+
+      .premium-badge {
+        background: linear-gradient(45deg, #ffd700, #ffa500);
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #000000;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-block;
+        margin-bottom: 0.8rem;
+      }
+
+      .sidebar-footer p {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-bottom: 1rem;
+      }
+
+      .explore-btn {
+        background-color: #ffffff;
+        color: #000000;
+        border: none;
+        padding: 0.7rem 1.2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .explore-btn:hover {
+        background-color: #f0f0f0;
+        transform: translateY(-2px);
+      }
+
+      /* Main Content Area */
+      .main-content {
+        flex: 1;
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        padding: 0;
+      }
+
+      /* Header & Search Bar */
+      .top-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: #ffffff;
+        border-bottom: 1px solid #f0f0f0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        position: sticky;
+        top: 0;
+        z-index: 99;
+      }
+
+      .page-title {
+        font-weight: 600;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .search-contact {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .search-input {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        border: 1px solid #ececec;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: center;
+        width: 300px;
+      }
+
+      .search-input input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        padding: 0.3rem 0.5rem;
+        font-family: "Poppins", sans-serif;
+        font-size: 0.9rem;
+        outline: none;
+      }
+
+      .search-btn,
+      .contact-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .search-btn {
+        background-color: transparent;
+        color: #888;
+      }
+
+      .contact-btn {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 0.5rem 1.2rem;
+        font-weight: 500;
+      }
+
+      /* Content Container */
+      .content {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 100%;
+      }
+
+      .finance-tracker {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+      }
+
+      /* Account Selection */
+      .account-selection {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .account-label {
+        font-weight: 500;
+        font-size: 1rem;
+      }
+
+      .account-dropdown {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #f0f0f0;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .account-icon {
+        width: 24px;
+        height: 24px;
+        background: #3498db;
+        border-radius: 4px;
+      }
+
+      .account-number {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      /* Balance Info */
+      .balance-info {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .balance-card {
+        background: #f9f9f9;
+        border-radius: 12px;
+        padding: 1.5rem;
+      }
+
+      .balance-label {
+        font-size: 0.9rem;
+        color: #777;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .balance-amount {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .balance-change {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .positive {
+        color: #4caf50;
+      }
+
+      .negative {
+        color: #f44336;
+      }
+
+      .coin-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* Transaction Section */
+      .transaction-section {
+        margin-top: 2rem;
+      }
+
+      .transaction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .transaction-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .create-transaction-btn {
+        background-color: #000000;
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        border: none;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .create-transaction-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .transactions-container {
+        background: #f9f9f9;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .transaction-list {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .transaction-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #ececec;
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+
+      .income-icon {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4caf50;
+      }
+
+      .expense-icon {
+        background: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+      }
+
+      .transaction-details {
+        flex: 1;
+      }
+
+      .transaction-title {
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        font-size: 1rem;
+      }
+
+      .transaction-category {
+        font-size: 0.8rem;
+        color: #777;
+      }
+
+      .transaction-amount {
+        font-weight: 600;
+        text-align: right;
+      }
+
+      .transaction-date {
+        font-size: 0.8rem;
+        color: #777;
+        text-align: right;
+        margin-top: 0.3rem;
+      }
+
+      .transaction-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-left: 1rem;
+      }
+
+      .transaction-action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #555;
+        transition: all 0.3s ease;
+      }
+
+      .transaction-action-btn:hover {
+        background: #e0e0e0;
+      }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal {
+        background: white;
+        border-radius: 12px;
+        width: 500px;
+        max-width: 90%;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .modal-overlay.active .modal {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .modal-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .modal-close {
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: #777;
+      }
+
+      .modal-body {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: "Poppins", sans-serif;
+        font-size: 0.9rem;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: "Poppins", sans-serif;
+        font-size: 0.9rem;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 0.9rem;
+      }
+
+      .btn-primary {
+        background: #000000;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #555;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-primary:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Transaction type toggle */
+      .transaction-type-toggle {
+        display: flex;
+        margin-bottom: 1.5rem;
+        background: #f0f0f0;
+        border-radius: 8px;
+        padding: 0.3rem;
+      }
+
+      .transaction-type-option {
+        flex: 1;
+        padding: 0.6rem;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .transaction-type-option.active {
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .transaction-type-option.income.active {
+        color: #4caf50;
+      }
+
+      .transaction-type-option.expense.active {
+        color: #f44336;
+      }
+
+      /* Right sidebar styles */
+      .right-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .video-section {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      }
+
+      .video-container {
+        position: relative;
+        height: 200px;
+      }
+
+      .video-player {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #f0f0f0;
+      }
+
+      .video-info {
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .video-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .video-description {
+        font-size: 0.85rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+
+      .video-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #777;
+      }
+
+      .video-author {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .author-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .related-videos {
+        padding: 1.5rem;
+      }
+
+      .related-videos h4 {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      .related-video-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+      }
+
+      .related-thumbnail {
+        width: 80px;
+        height: 45px;
+        background: #f0f0f0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .related-info {
+        flex: 1;
+      }
+
+      .related-title {
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+      }
+
+      .related-meta {
+        font-size: 0.75rem;
+        color: #777;
+      }
+
+      .promo-card {
+        background: linear-gradient(135deg, #000000, #333333);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .promo-content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .promo-content h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+      }
+
+      .promo-content p {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 1.5rem;
+      }
+
+      .promo-content .explore-btn {
+        width: auto;
+      }
+
+      .visual-element {
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 50%;
+        z-index: 0;
+      }
+
+      .visual-element-2 {
+        position: absolute;
+        top: -20px;
+        right: 40px;
+        width: 120px;
+        height: 120px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        z-index: 0;
+      }
+
+      /* Empty state */
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        text-align: center;
+      }
+
+      .empty-icon {
+        font-size: 3rem;
+        color: #e0e0e0;
+        margin-bottom: 1rem;
+      }
+
+      .empty-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #777;
+        margin-bottom: 0.5rem;
+      }
+
+      .empty-subtext {
+        font-size: 0.9rem;
+        color: #999;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 1200px) {
+        .balance-info {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .balance-info {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon"><i class="fas fa-wallet"></i></div>
+          FinElite
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link active">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-exchange-alt"></i>
+            <span>Transactions</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Budgets</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Savings</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-credit-card"></i>
+            <span>Accounts</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-flag"></i>
+            <span>Goals</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <span class="premium-badge">Premium</span>
+        <p>
+          Upgrade to unlock advanced features and detailed financial insights.
+        </p>
+        <button class="explore-btn">EXPLORE PREMIUM</button>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Header -->
+      <div class="top-header">
+        <div class="page-title">
+          <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          Transactions
+        </div>
+        <div class="search-contact">
+          <div class="search-input">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search" />
+          </div>
+          <button class="contact-btn">⌘ K</button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="content">
+        <!-- Finance Tracker -->
+        <div class="finance-tracker">
+          <!-- Account Selection -->
+          <div class="account-selection">
+            <span class="account-label">Accounts</span>
+            <div class="account-dropdown">
+              <div class="account-icon"></div>
+              <span class="account-number">•••• 6789</span>
+              <i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
+
+          <!-- Balance Info -->
+          <div class="balance-info">
+            <div class="balance-card">
+              <div class="balance-label">
+                Total balance <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="balance-amount" id="total-balance">USD 424,540</div>
+              <div class="balance-change positive">
+                <i class="fas fa-arrow-up"></i> 2.4% this month
+              </div>
+            </div>
+
+            <div class="balance-card">
+              <div class="balance-label">
+                Income <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="balance-amount" id="total-income">USD 32,650</div>
+              <div class="balance-change positive">
+                <i class="fas fa-arrow-up"></i> 8.2% this month
+              </div>
+            </div>
+
+            <div class="balance-card">
+              <div class="balance-label">
+                Expenses <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="balance-amount" id="total-expenses">USD 18,230</div>
+              <div class="balance-change negative">
+                <i class="fas fa-arrow-up"></i> 3.1% this month
+              </div>
+            </div>
+          </div>
+
+          <!-- Transaction Section -->
+          <div class="transaction-section">
+            <div class="transaction-header">
+              <h2>Recent Transactions</h2>
+              <button
+                class="create-transaction-btn"
+                id="create-transaction-btn"
+              >
+                <i class="fas fa-plus"></i> Add Transaction
+              </button>
+            </div>
+
+            <div class="transactions-container">
+              <div id="transaction-list">
+                <!-- Transactions will be added here dynamically -->
+                <div class="empty-state" id="empty-state">
+                  <div class="empty-icon">
+                    <i class="fas fa-receipt"></i>
+                  </div>
+                  <div class="empty-text">No transactions yet</div>
+                  <div class="empty-subtext">
+                    Add your first transaction to start tracking your finances
+                  </div>
+                  <button
+                    class="create-transaction-btn"
+                    onclick="openTransactionModal()"
+                  >
+                    <i class="fas fa-plus"></i> Add Transaction
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Sidebar with Promo Content -->
+        <div class="right-sidebar">
+          <!-- Video Section -->
+          <div class="video-section">
+            <div class="video-container">
+              <div class="video-player">
+                <img
+                  src="/api/placeholder/350/197"
+                  alt="Financial Education Video Placeholder"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+                <div
+                  style="
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    font-size: 40px;
+                  "
+                >
+                  <i class="fas fa-play-circle"></i>
+                </div>
+              </div>
+            </div>
+            <div class="video-info">
+              <div class="video-title">
+                How to Track Your Spending Effectively
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
